@@ -2,8 +2,8 @@
 
 ## Tyler
 
-- [ ] Due Thursday, 02/16: Implement file parsing
-- [ ] Due Friday, 02/17: Write constraint net and backtracking algorithm
+- [ ] Due Thursday, 02/16: Implement file parsing and constraint net
+- [ ] Due Friday, 02/17: Backtracking algorithm
 
 ## Harry
 - [ ] Due Thursday, 02/16: Write minimum remaining values and least-constraining-value heuristics function
