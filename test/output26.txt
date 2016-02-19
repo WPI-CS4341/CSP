@@ -1,0 +1,64 @@
+a A Z
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+b B Y
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+c C X
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+d D W
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+e E V
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+f F U
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+g G T
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+h H S
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+i I R
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+j J Q
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+k K P
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+l L O
+number of items: 2
+total weight: 27/27
+wasted capacity: 0
+
+m M N
+number of items: 2
+total weight: 27/27
+wasted capacity: 0

@@ -1,0 +1,9 @@
+a B
+number of items: 1
+total weight: 1/1
+wasted capacity: 0
+
+b A
+number of items: 1
+total weight: 1/1
+wasted capacity: 0

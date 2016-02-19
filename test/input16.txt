@@ -1,0 +1,16 @@
+##### - variables
+A 2
+B 1
+C 1
+D 1
+##### - values
+a 3
+b 3
+##### - fitting limits
+##### - unary inclusive
+##### - unary exclusive
+##### - binary equals
+B C
+C D
+##### - binary not equals
+##### - binary simultaneous

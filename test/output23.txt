@@ -1,0 +1,29 @@
+a C
+number of items: 1
+total weight: 2/2
+wasted capacity: 0
+
+b D
+number of items: 1
+total weight: 2/2
+wasted capacity: 0
+
+c E
+number of items: 1
+total weight: 2/2
+wasted capacity: 0
+
+d F
+number of items: 1
+total weight: 2/2
+wasted capacity: 0
+
+e A
+number of items: 1
+total weight: 2/2
+wasted capacity: 0
+
+f B
+number of items: 1
+total weight: 2/2
+wasted capacity: 0

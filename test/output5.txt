@@ -1,0 +1,9 @@
+a A B C D E F G H I
+number of items: 9
+total weight: 9/10
+wasted capacity: 1
+
+b J K L M N O P Q R
+number of items: 9
+total weight: 9/10
+wasted capacity: 1

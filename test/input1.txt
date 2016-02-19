@@ -1,0 +1,10 @@
+##### - variables
+A 10
+##### - values
+a 10
+##### - fitting limits
+##### - unary inclusive
+##### - unary exclusive
+##### - binary equals
+##### - binary not equals
+##### - binary simultaneous

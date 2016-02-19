@@ -1,0 +1,24 @@
+a G I
+number of items: 2
+total weight: 4/4
+wasted capacity: 0
+
+b F H
+number of items: 2
+total weight: 5/5
+wasted capacity: 0
+
+c A B
+number of items: 2
+total weight: 7/7
+wasted capacity: 0
+
+d C J
+number of items: 2
+total weight: 2/3
+wasted capacity: 0
+
+e D E K
+number of items: 2
+total weight: 8/8
+wasted capacity: 0
