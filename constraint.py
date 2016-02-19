@@ -1,15 +1,17 @@
+# Bag fit constraint
+BAG_FIT_LIMIT = 1
+
+# Unary constraints
+UNARY_CONSTRAINT_IN_BAGS = 2
+UNARY_CONSTRAINT_NOT_IN_BAGS = 3
+
+# Binary constraints
+BINARY_CONSTRAINT_EQUANLITY = 4
+BINARY_CONSTRAINT_INEQUANLITY = 5
+BINARY_CONSTRAINT_INCLUSIVITY = 6
+
+
 class Contraint(object):
-    # Bag fit constraint
-    BAG_FIT_LIMIT = 1
-
-    # Unary constraints
-    UNARY_CONSTRAINT_IN_BAGS = 2
-    UNARY_CONSTRAINT_NOT_IN_BAGS = 3
-
-    # Binary constraints
-    BINARY_CONSTRAINT_EQUANLITY = 4
-    BINARY_CONSTRAINT_INEQUANLITY = 5
-    BINARY_CONSTRAINT_INCLUSIVITY = 6
 
     def __init__(self, x, y, items, bags, constraint_type):
         """Initalize the constraint"""

@@ -1,5 +1,5 @@
-import CSPComponent from csp_component
-class Item(CSPComponent):
+class Item(object):
+
     def __init__(self, weight):
         # Weight of the item
         self.weight = weight
