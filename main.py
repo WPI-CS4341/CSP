@@ -84,7 +84,7 @@ def main():
                             items[item2].constraints.append(constraint)
 
             csp = CSP(items, bags)
-
+            Solver.backtrack({}, csp)
         else:
             # Throw error when cannot open file
             print("Input file does not exist.")

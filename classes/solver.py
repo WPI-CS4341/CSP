@@ -1,7 +1,12 @@
 class Solver(object):
-    def __order_domain_values(self):
+    def __order_domain_values(self, var, assignment, csp):
+        bags = csp.bags
+        items = csp.items
+        for b in bags:
+            bag = bags[b]
         return {}
 
+    # Should return key name of variable
     def __select_unassigned_variable(csp):
         return 0
 
@@ -13,7 +18,7 @@ class Solver(object):
     select_unassigned_variable = MRV + degree
     inference = Forward Checking
     """
-    def Backtrack(assignment, csp):
+    def backtrack(assignment, csp):
         # if assignment is
         var = __select_unassigned_variable(csp)
         for value in __order_domain_values(var, assignment, csp):
@@ -23,7 +28,7 @@ class Solver(object):
                 inferences = __inference(csp, var, value)
                 if inferences:
                     assignment.append(inferences)  # Won't work
-                    result = self.Backtrack(assignment, csp)
+                    result = self.backtrack(assignment, csp)
                     if result:
                         return result
             assignment.pop(var, None)
