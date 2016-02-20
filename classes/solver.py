@@ -12,7 +12,7 @@ class Solver(object):
             for c in items[var].constraints:
                 if c.validate() is False:
                     violations += 1
-            vdict[current_bag.name] = violations
+            vdict[current_bag] = violations
         items[var] = original_bag
         return sorted(vdict, key=lambda k: vdict[k])
 
