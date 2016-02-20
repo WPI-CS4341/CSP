@@ -25,13 +25,13 @@ def main():
         if os.path.isfile(filename):
             with open(filename, "r") as infile:
                 for line in infile:
-                    # Remove new line character and carriage return
-                    line = line[:-1]
                     # If the line is a comment, increment the section counter
                     if line[:5].strip() == "#####":
                         current_section += 1
                     else:
-                        s = line.split(" ")
+                        # Split the line and remove all tabs, newlines, etc.
+                        s = [x.strip() for x in line.split(" ")]
+
                         if current_section == 1:  # Items
                             name = s[0]
                             weight = s[1]
@@ -46,8 +46,7 @@ def main():
                             constraint = Constraint(
                                 Constraint.BAG_FIT_LIMIT, min_items=lower_bound, max_items=upper_bound)
                             for b in bags:
-                                bags[b]["lower_bound"] = lower_bound
-                                bags[b]["upper_bound"] = upper_bound
+                                bags[b].constraints.append(constraint)
                         elif current_section == 4:  # Unary inclusive
                             name = s[0]
                             require_bags = s[1:]
@@ -79,13 +78,12 @@ def main():
                             item2 = s[1]
                             value1 = s[2]
                             value2 = s[3]
-                            constraint = Constraint(BINARY_CONSTRAINT_INCLUSIVITY, items=[
+                            constraint = Constraint(Constraint.BINARY_CONSTRAINT_INCLUSIVITY, items=[
                                                     items[item1], items[item2]], bags=[bags[value1], bags[value2]])
                             items[item1].constraints.append(constraint)
                             items[item2].constraints.append(constraint)
-                pp = pprint.PrettyPrinter(indent=4)
-                pp.pprint(items)
-                pp.pprint(bags)
+
+            csp = CSP(items, bags)
 
         else:
             # Throw error when cannot open file
