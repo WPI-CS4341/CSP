@@ -34,7 +34,7 @@ class Constraint(object):
             # Check for required variables
             if self.min_items < 0 or self.max_items < 0:
                 raise ValueError("Constraint type BAG_FIT_LIMIT requires \
-                    non-negative min_items and max_items values")
+                    non-negative min_items and max_items values and one bag")
             # The number of item in bag must between x and y
             return self.min_items <= len(self.bags[0].items) <= self.max_items
         elif self.constraint_type == self.UNARY_CONSTRAINT_IN_BAGS:
