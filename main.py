@@ -1,6 +1,11 @@
 import sys
 import os.path
 import pprint
+from classes.bag import Bag
+from classes.item import Item
+from classes.constraint import Constraint
+from classes.csp import CSP
+from classes.solver import Solver
 
 
 def main():
@@ -30,52 +35,54 @@ def main():
                         if current_section == 1:  # Items
                             name = s[0]
                             weight = s[1]
-                            items[name] = {"weight": weight}
+                            items[name] = Item(weight)
                         elif current_section == 2:  # Bags
                             name = s[0]
                             capacity = s[1]
-                            bags[name] = {"capacity": capacity}
+                            bags[name] = Bag(capacity)
                         elif current_section == 3:  # Fitting limits
                             lower_bound = s[0]
                             upper_bound = s[1]
+                            constraint = Constraint(
+                                Constraint.BAG_FIT_LIMIT, min_items=lower_bound, max_items=upper_bound)
                             for b in bags:
                                 bags[b]["lower_bound"] = lower_bound
                                 bags[b]["upper_bound"] = upper_bound
                         elif current_section == 4:  # Unary inclusive
                             name = s[0]
                             require_bags = s[1:]
-                            if "require_bags" not in items:
-                                items[name]["require_bags"] = []
-                            for b in require_bags:
-                                if b:
-                                    items[name]["require_bags"].append(b)
+                            constraint = Constraint(Constraint.UNARY_CONSTRAINT_IN_BAGS, items=[
+                                                    items[name]], bags=require_bags)
+                            items[name].constraints.append(constraint)
                         elif current_section == 5:  # Unary exclusive
                             name = s[0]
                             reject_bags = s[1:]
-                            if "reject_bags" not in items:
-                                items[name]["reject_bags"] = []
-                            for b in reject_bags:
-                                if b:
-                                    items[name]["reject_bags"].append(b)
+                            constraint = Constraint(Constraint.UNARY_CONSTRAINT_NOT_IN_BAGS, items=[
+                                                    items[name]], bags=reject_bags)
+                            items[name].constraints.append(constraint)
                         elif current_section == 6:  # Binary equals
                             item1 = s[0]
                             item2 = s[1]
-                            items[item1]["equals"] = item2
-                            items[item2]["equals"] = item1
+                            constraint = Constraint(Constraint.BINARY_CONSTRAINT_EQUALITY, items=[
+                                                    items[item1], items[item2]])
+                            for i in [item1, item2]:
+                                items[i].constraints.append(constraint)
                         elif current_section == 7:  # Binary not equals
                             item1 = s[0]
                             item2 = s[1]
-                            items[item1]["not_equals"] = item2
-                            items[item2]["not_equals"] = item1
-                        elif current_section == 8:  # Binary
+                            constraint = Constraint(Constraint.BINARY_CONSTRAINT_INEQUALITY, items=[
+                                                    items[item1], items[item2]])
+                            for i in [item1, item2]:
+                                items[i].constraints.append(constraint)
+                        elif current_section == 8:  # Binary inclusive
                             item1 = s[0]
                             item2 = s[1]
                             value1 = s[2]
                             value2 = s[3]
-                            # Should be read as:
-                            # item1 = value1 if item2 = value2
-                            items[item1]["mutex"] = [value1, item2, value2]
-                            items[item2]["mutex"] = [value2, item1, value1]
+                            constraint = Constraint(BINARY_CONSTRAINT_INCLUSIVITY, items=[
+                                                    items[item1], items[item2]], bags=[bags[value1], bags[value2]])
+                            items[item1].constraints.append(constraint)
+                            items[item2].constraints.append(constraint)
                 pp = pprint.PrettyPrinter(indent=4)
                 pp.pprint(items)
                 pp.pprint(bags)
