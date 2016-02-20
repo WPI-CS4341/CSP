@@ -1,6 +1,8 @@
 class Item(object):
 
-    def __init__(self, weight):
+    def __init__(self, name, weight):
+        # Name of the Item
+        self.name = name
         # Weight of the item
         self.weight = weight
         # The bag that item is in

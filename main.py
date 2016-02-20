@@ -35,11 +35,11 @@ def main():
                         if current_section == 1:  # Items
                             name = s[0]
                             weight = s[1]
-                            items[name] = Item(weight)
+                            items[name] = Item(name, weight)
                         elif current_section == 2:  # Bags
                             name = s[0]
                             capacity = s[1]
-                            bags[name] = Bag(capacity)
+                            bags[name] = Bag(name, capacity)
                         elif current_section == 3:  # Fitting limits
                             lower_bound = s[0]
                             upper_bound = s[1]
@@ -84,7 +84,7 @@ def main():
                             items[item2].constraints.append(constraint)
 
             csp = CSP(items, bags)
-            Solver.backtrack({}, csp)
+            # Solver.backtrack({}, csp)
         else:
             # Throw error when cannot open file
             print("Input file does not exist.")
