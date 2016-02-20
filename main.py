@@ -49,13 +49,13 @@ def main():
                                 bags[b].constraints.append(constraint)
                         elif current_section == 4:  # Unary inclusive
                             name = s[0]
-                            require_bags = s[1:]
+                            require_bags = [bags[k] for k in s[1:]]
                             constraint = Constraint(Constraint.UNARY_CONSTRAINT_IN_BAGS, items=[
                                                     items[name]], bags=require_bags)
                             items[name].constraints.append(constraint)
                         elif current_section == 5:  # Unary exclusive
                             name = s[0]
-                            reject_bags = s[1:]
+                            reject_bags = [bags[k] for k in s[1:]]
                             constraint = Constraint(Constraint.UNARY_CONSTRAINT_NOT_IN_BAGS, items=[
                                                     items[name]], bags=reject_bags)
                             items[name].constraints.append(constraint)
@@ -84,7 +84,8 @@ def main():
                             items[item2].constraints.append(constraint)
 
             csp = CSP(items, bags)
-            # Solver.backtrack({}, csp)
+            solver = Solver()
+            solver.solve(csp)
         else:
             # Throw error when cannot open file
             print("Input file does not exist.")
