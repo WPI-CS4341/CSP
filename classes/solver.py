@@ -1,25 +1,43 @@
 from constraint import Constraint
 
+
 class Solver(object):
+
+    def __count_valid_domain(self, var, items, bags):
+        item = var
+        valid_i = 0
+        for b in bags:
+            bag = bags[b]
+            item.putInBag(bag)
+            valid_b = True
+            for ic in item.constraints:
+                if ic.validate() is False:
+                    valid_b = False
+            # for bc in bag.constraints:
+            #     if bc.validate() is False:
+            #         valid_b = False
+            if valid_b:
+                valid_i += 1
+            print item.bag.name + ": " + str(valid_b)
+        return valid_i
 
     def __order_domain_values(self, var, csp):
         bags = csp.bags
         items = csp.items
-        original_bag = csp.items[var].bag
+        item = var
         vdict = {}
         for b in bags:
-            current_bag = bags[b]
-            csp.items[var].bag = current_bag
-            violations = 0
-            for ic in items[var].constraints:
-                if ic.validate() is False:
-                    violations += 1
-            for bc in current_bag.constraints:
-                if bc.validate() is False:
-                    violations += 1
-            vdict[current_bag] = violations
-        items[var] = original_bag
-        return sorted(vdict, key=lambda k: vdict[k])
+            total = 0
+            count = 0
+            item.putInBag(bags[b])
+            for i in csp.items:
+                # print items[i].name
+                # print self.__count_valid_domain(var, items, bags)
+                total += self.__count_valid_domain(var, items, bags)
+                count += 1
+            vdict[b] = round(total / (count * 1.0))
+            # print total
+        return vdict
 
     # Should return key name of variable
     def __select_unassigned_variable(self, csp):
@@ -36,7 +54,7 @@ class Solver(object):
 
             if num_remaining_bag < num_min_item:
                 min_item_name = item_name
-            else :
+            else:
                 if num_constrains[item_name] > num_constrains[min_item_name]:
                     min_item_name = item_name
 
@@ -54,13 +72,15 @@ class Solver(object):
             # Iterate through constraints
             for constraint in csp.items[item_name].constraints:
                 # Binary constraints
-                cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+                cond = (constraint.constraint_type >=
+                        Constraint.BINARY_CONSTRAINT_EQUALITY)
                 if cond:
                     # All items involved in constraint
                     for item in constraint.items:
                         # The other unassigned item
                         if item.name != item_name and item.name in unassigned_item_names:
-                            # Increment number of constraints on other unassigned items
+                            # Increment number of constraints on other
+                            # unassigned items
                             count += 1
             # Save number of constraints for this item
             num_constrains[item_name] = count
@@ -75,12 +95,13 @@ class Solver(object):
     select_unassigned_variable = MRV + degree
     inference = Forward Checking
     """
-    def __backtrack(self, items,csp):
+
+    def __backtrack(self, items, csp):
         # if assignment is
         var = self.__select_unassigned_variable(csp)
-        print var.name
+        # print var.name
         # for
-        # print self.__order_domain_values(var, csp)
+        print self.__order_domain_values(var, csp)
         # for value in __order_domain_values(var, csp):
         # if True:
         #         # if value is consistent with assignment
@@ -96,10 +117,9 @@ class Solver(object):
 
     # def __forward_checking(self, csp, var, value):
 
-
     def solve(self, csp):
 
         # Initialize legal values for items
-        self.consistent_bags = {item:csp.bags.copy() for item in csp.items}
+        self.consistent_bags = {item: csp.bags.copy() for item in csp.items}
 
         bt = self.__backtrack([], csp)
