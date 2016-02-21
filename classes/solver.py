@@ -6,9 +6,11 @@ class Solver(object):
 
     def __order_domain_values(self, item, csp):
         bags_constraints = []
-        for bag in item.possible_bags.keys():
-            item.bag = item.possible_bags[bag]
-
+        possible_bags = self.__possible_bags(item, csp)
+        # print item.name
+        # print possible_bags
+        for bag in possible_bags:
+            possible_bags[bag]
             count = 0
             for constraint in item.constraints:
                 cond = (constraint.constraint_type >=
@@ -21,13 +23,17 @@ class Solver(object):
             item.bag = None
 
         sorted(bags_constraints, key=lambda bag: bag[1], reverse=True)
-        return [item.possible_bags[bag[0]] for bag in bags_constraints]
+        bags = [possible_bags[bag[0]] for bag in bags_constraints]
+        # print item.name
+        # print bags
+        return bags
 
     def __num_valid_bag(self, item):
         count = 0
         for bag in item.possible_bags:
             item.bag = item.possible_bags[bag]
             valid = 1
+
             for constraint in item.constraints:
                 if not constraint.validate():
                     valid = 0
@@ -55,8 +61,8 @@ class Solver(object):
         # Find the item with least possible bags
         for item_name in unassigned_item_names[1:]:
             # Number possible_bags
-            num_remaining_bag = len(unassigned_items[item_name].possible_bags)
-            num_min_item = len(unassigned_items[min_item_name].possible_bags)
+            num_remaining_bag = len(self.__possible_bags(unassigned_items[item_name], csp))
+            num_min_item = len(self.__possible_bags(unassigned_items[min_item_name], csp))
 
             # Select when have less possible bag
             if num_remaining_bag < num_min_item:
@@ -68,7 +74,16 @@ class Solver(object):
                     # Select the one with maximum constraints
                     min_item_name = item_name
 
+        # print min_item_name
         return csp.items[min_item_name]
+
+    def __possible_bags(self, item, csp):
+        bags = {}
+        for bag in csp.bags:
+            if csp.bags[bag].has_capcity(item):
+                bags[bag] = csp.bags[bag]
+
+        return bags
 
     def __get_num_constraints(self, csp, unassigned_item_names):
         """Get number of constraints a variable on others"""
@@ -99,28 +114,47 @@ class Solver(object):
     def __inference(self, csp, item, bag, assignment):
         return self.__forward_checking(csp, item, bag, assignment)
 
+    def __complete(self, assignment):
+        for item in assignment:
+            if len(assignment[item]) == 0:
+                return False
+        return True
+
     def __backtrack(self, assignment, csp):
-        if len(assignment) == len(csp.items):
-            return assignment
+        self.__complete(assignment)
 
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assignment, csp)
 
         assignment[item.name] = []
         for bag in self.__order_domain_values(item, csp):
+            # print item.name + " " +bag.name
             if self.__is_consistant(bag, item, assignment, csp):
+                print "sfsfds"
+                print item.name
                 assignment[item.name].append(bag.name)
                 bag.items.append(item)
 
                 inferences = self.__inference(csp, item, bag, assignment)
                 if inferences is not None:
+                    print "++++"
+                    print assignment
+                    print "----"
                     assignment.update(inferences)
+                    # print assignment
                     result = self.__backtrack(assignment, csp)
+
+                    # print assignment
+                    # print result
+                    # print ""
+
                     if result is not None:
+                        # print result
                         return result
                     for inference in inferences:
                         assignment.pop(inference)
-                assignment[item.name].remove(bag.name)
+
+                assignment = {item:assignment[item] for item in assignment if len(assignment[item]) > 0}
         return None
 
     def __forward_checking(self, csp, item, bag, assignment):
@@ -128,13 +162,12 @@ class Solver(object):
             item_name] for item_name in csp.items if item_name not in assignment}
 
         inferences = {}
-
         item.bag = bag
         for constraint in item.constraints:
             cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
             if cond:
                 neighbor = constraint.get_neighbor(item)
-                possible_bags = self.__clean_up_neighbor(constraint, neighbor)
+                possible_bags = self.__clean_up_neighbor(constraint, neighbor, csp)
                 if possible_bags is None:
                     return None
 
@@ -146,6 +179,7 @@ class Solver(object):
     def __is_consistant(self, bag, item, assignment, csp):
         if not bag.has_capcity(item):
             return False
+
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:
             cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
@@ -165,8 +199,9 @@ class Solver(object):
                     item.bag = None
         return True
 
-    def __clean_up_neighbor(self, constraint, item):
-        possible_bags = item.possible_bags.copy()
+    def __clean_up_neighbor(self, constraint, item, csp):
+        print "+++++++++++++++++"
+        possible_bags = item
         possible_bags_loop = item.possible_bags.copy()
 
         for bag in possible_bags_loop:
