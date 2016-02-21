@@ -66,7 +66,7 @@ class Constraint(object):
             # The two items must not in the same bag
             return self.items[0].bag is not self.items[1].bag
         elif self.constraint_type == self.BINARY_CONSTRAINT_INCLUSIVITY:
-                # Check for required variables
+            # Check for required variables
             if len(self.items) < 2 or len(self.bags) < 0:
                 raise ValueError("Constraint type BINARY_CONSTRAINT_INCLUSIVITY \
                         requires two items and at least one bag")
