@@ -11,8 +11,11 @@ class Solver(object):
             current_bag = bags[b]
             csp.items[var].bag = current_bag
             violations = 0
-            for c in items[var].constraints:
-                if c.validate() is False:
+            for ic in items[var].constraints:
+                if ic.validate() is False:
+                    violations += 1
+            for bc in current_bag.constraints:
+                if bc.validate() is False:
                     violations += 1
             vdict[current_bag] = violations
         items[var] = original_bag
