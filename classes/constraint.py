@@ -15,7 +15,7 @@ class Constraint(object):
     BINARY_CONSTRAINT_INEQUALITY = 5
     BINARY_CONSTRAINT_INCLUSIVITY = 6
 
-    def __init__(self, constraint_type, min_items=-1, max_items=-1, items={}, bags={}):
+    def __init__(self, constraint_type, min_items=-1, max_items=-1, items=[], bags=[]):
         """Initalize the constraint"""
         # minimum number of items in the bag
         self.min_items = min_items
