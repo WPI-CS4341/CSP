@@ -71,9 +71,9 @@ class Constraint(object):
                 raise ValueError("Constraint type BINARY_CONSTRAINT_INCLUSIVITY \
                         requires two items and at least one bag")
             # Items simultaneously in a given pair of bags
-            both_in_condition = items[
-                0].bag in self.bags and items[1].bag in self.bags
+            both_in_condition = self.items[
+                0].bag in self.bags and self.items[1].bag in self.bags
             # Items simultaneously not in a given pair of bags
-            both_not_in_condition = items[
-                0].bag not in self.bags and items[1].bag not in self.bags
+            both_not_in_condition = self.items[
+                0].bag not in self.bags and self.items[1].bag not in self.bags
             return both_in_condition or both_not_in_condition

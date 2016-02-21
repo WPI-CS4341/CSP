@@ -14,12 +14,8 @@ class Solver(object):
             for ic in item.constraints:
                 if ic.validate() is False:
                     valid_b = False
-            # for bc in bag.constraints:
-            #     if bc.validate() is False:
-            #         valid_b = False
             if valid_b:
                 valid_i += 1
-            print item.bag.name + ": " + str(valid_b)
         return valid_i
 
     def __order_domain_values(self, var, csp):
@@ -32,13 +28,10 @@ class Solver(object):
             count = 0
             item.putInBag(bags[b])
             for i in csp.items:
-                # print items[i].name
-                # print self.__count_valid_domain(var, items, bags)
-                total += self.__count_valid_domain(var, items, bags)
+                total += self.__count_valid_domain(items[i], items, bags)
                 count += 1
             vdict[b] = round(total / (count * 1.0))
-            # print total
-        return vdict
+        return sorted(vdict, key=lambda k: vdict[k])
 
     # Should return key name of variable
     def __select_unassigned_variable(self, assigned_items, csp):
@@ -107,7 +100,7 @@ class Solver(object):
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assigned_items, csp)
 
-        print self.__order_domain_values(var, csp)
+        print self.__order_domain_values(item, csp)
         # for value in __order_domain_values(var, csp):
         # if True:
         #         # if value is consistent with assignment

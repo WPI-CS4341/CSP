@@ -13,7 +13,7 @@ class Item(object):
         self.constraints = []
 
     def __eq__(self, other):
-        if isinstance(other, Bag):
+        if isinstance(other, Item):
             return self.name == other.name
         return NotImplemented
 
