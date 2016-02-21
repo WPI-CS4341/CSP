@@ -5,9 +5,9 @@ class Solver(object):
 
     def __order_domain_values(self, item, csp):
         bags_constrains = []
-
-        for bag in item.possible_bags.keys()[1:]:
+        for bag in item.possible_bags.keys():
             item.bag = item.possible_bags[bag]
+
             count = 0
             for constraint in item.constraints:
                 cond = (constraint.constraint_type >=
@@ -56,7 +56,7 @@ class Solver(object):
         for item_name in unassigned_item_names[1:]:
             # Number possible_bags
             num_remaining_bag = len(unassigned_items[item_name].possible_bags)
-            num_min_item = len(unassigned_items[item_name].possible_bags)
+            num_min_item = len(unassigned_items[min_item_name].possible_bags)
 
             # Select when have less possible bag
             if num_remaining_bag < num_min_item:
@@ -108,18 +108,20 @@ class Solver(object):
         if len(assignment) == len(csp.items):
             return assignment
 
+        csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assignment, csp)
         assignment[item.name] = []
         for bag in self.__order_domain_values(item, csp):
             if self.__is_consistant(bag, item, assignment, csp):
                 # if value is consistent with assignment
                 assignment[item.name].append(bag.name)
-                inferences = self.__inference(csp, item, bag, assignment)
+                bag.items.append(item)
 
-                if inferences is not None and len(inferences) > 0:
+                inferences = self.__inference(csp, item, bag, assignment)
+                if inferences is not None:
                     assignment.update(inferences)
                     result = self.__backtrack(assignment, csp)
-                    if result is not None and len(result) > 0:
+                    if result is not None:
                         return result
                     for inference in inferences:
                         assignment.pop(inference)
@@ -147,6 +149,9 @@ class Solver(object):
         return inferences
 
     def __is_consistant(self, bag, item, assignment, csp):
+        if not bag.has_capcity(item):
+            return False
+            
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:
             cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
@@ -182,14 +187,14 @@ class Solver(object):
     def solve(self, csp):
         bt = self.__backtrack({}, csp)
 
-        print bt
-
         result = {}
         for bag in csp.bags:
             result[bag] = []
 
-        for item in bt:
-            for bag in bt[item]:
-                result[bag].append(item)
-
+        if bt:
+            for item in bt:
+                for bag in bt[item]:
+                    result[bag].append(item)
+        else:
+            return None
         return result

@@ -4,7 +4,7 @@ class Item(object):
         # Name of the Item
         self.name = name
         # Weight of the item
-        self.weight = weight
+        self.weight = int(weight)
         # The bag that item is in
         self.bag = None
         # Possible bags
