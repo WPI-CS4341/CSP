@@ -56,7 +56,7 @@ class Solver(object):
         for item_name in unassigned_item_names[1:]:
             # Number possible_bags
             num_remaining_bag = len(unassigned_items[item_name].possible_bags)
-            num_min_item = len(unassigned_items[item_name].possible_bags)
+            num_min_item = len(unassigned_items[min_item_name].possible_bags)
 
             # Select when have less possible bag
             if num_remaining_bag < num_min_item:
