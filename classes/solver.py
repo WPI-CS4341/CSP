@@ -1,10 +1,11 @@
 from constraint import Constraint
 import copy
 
+
 class Solver(object):
 
     def __order_domain_values(self, item, csp):
-        bags_constrains = []
+        bags_constraints = []
         for bag in item.possible_bags.keys():
             item.bag = item.possible_bags[bag]
 
@@ -16,11 +17,11 @@ class Solver(object):
                     neighbor = constraint.get_neighbor(item)
                     num_bag_possible = self.__num_valid_bag(neighbor)
                     count += num_bag_possible
-            bags_constrains.append([bag, count])
+            bags_constraints.append([bag, count])
             item.bag = None
 
-        sorted(bags_constrains, key=lambda bag: bag[1], reverse=True)
-        return [item.possible_bags[bag[0]] for bag in bags_constrains]
+        sorted(bags_constraints, key=lambda bag: bag[1], reverse=True)
+        return [item.possible_bags[bag[0]] for bag in bags_constraints]
 
     def __num_valid_bag(self, item):
         count = 0
@@ -36,7 +37,6 @@ class Solver(object):
         item.bag = None
         return count
 
-    # Should return key name of variable
     def __select_unassigned_variable(self, assignment, csp):
         """Select unassigned variable with with fewest legal values"""
 
@@ -50,7 +50,7 @@ class Solver(object):
         min_item_name = unassigned_item_names[0]
 
         # Get number of constraints of each unassigned item
-        num_constrains = self.__get_num_constrains(csp, unassigned_items)
+        num_constraints = self.__get_num_constraints(csp, unassigned_items)
 
         # Find the item with least possible bags
         for item_name in unassigned_item_names[1:]:
@@ -64,16 +64,16 @@ class Solver(object):
 
             elif num_remaining_bag == num_min_item:
                 # When have same number of possible bags
-                if num_constrains[item_name] > num_constrains[min_item_name]:
+                if num_constraints[item_name] > num_constraints[min_item_name]:
                     # Select the one with maximum constraints
                     min_item_name = item_name
 
         return csp.items[min_item_name]
 
-    def __get_num_constrains(self, csp, unassigned_item_names):
+    def __get_num_constraints(self, csp, unassigned_item_names):
         """Get number of constraints a variable on others"""
         # Number of contraints
-        num_constrains = {}
+        num_constraints = {}
         # For all unsigned items
         for item_name in unassigned_item_names:
             # No contraints on other unsigned variable yet
@@ -92,28 +92,23 @@ class Solver(object):
                             # unassigned items
                             count += 1
             # Save number of constraints for this item
-            num_constrains[item_name] = count
+            num_constraints[item_name] = count
         # return dictionary
-        return num_constrains
+        return num_constraints
 
     def __inference(self, csp, item, bag, assignment):
         return self.__forward_checking(csp, item, bag, assignment)
 
-    """
-    order_domain_values = LCV
-    select_unassigned_variable = MRV + degree
-    inference = Forward Checking
-    """
     def __backtrack(self, assignment, csp):
         if len(assignment) == len(csp.items):
             return assignment
 
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assignment, csp)
+
         assignment[item.name] = []
         for bag in self.__order_domain_values(item, csp):
             if self.__is_consistant(bag, item, assignment, csp):
-                # if value is consistent with assignment
                 assignment[item.name].append(bag.name)
                 bag.items.append(item)
 
@@ -151,7 +146,6 @@ class Solver(object):
     def __is_consistant(self, bag, item, assignment, csp):
         if not bag.has_capcity(item):
             return False
-            
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:
             cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
