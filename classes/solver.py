@@ -1,6 +1,7 @@
 from constraint import Constraint
 import copy
 
+
 class Solver(object):
 
     def __order_domain_values(self, item, csp):
@@ -99,11 +100,7 @@ class Solver(object):
     def __inference(self, csp, item, bag, assignment):
         return self.__forward_checking(csp, item, bag, assignment)
 
-    """
-    order_domain_values = LCV
-    select_unassigned_variable = MRV + degree
-    inference = Forward Checking
-    """
+
     def __backtrack(self, assignment, csp):
         if len(assignment) == len(csp.items):
             return assignment
@@ -111,8 +108,7 @@ class Solver(object):
         item = self.__select_unassigned_variable(assignment, csp)
         assignment[item.name] = []
         for bag in self.__order_domain_values(item, csp):
-            if self.__is_consistant(bag, item, assignment, csp):
-                # if value is consistent with assignment
+            if self.__is_consistent(bag, item, assignment, csp):
                 assignment[item.name].append(bag.name)
                 inferences = self.__inference(csp, item, bag, assignment)
 
@@ -146,7 +142,7 @@ class Solver(object):
         item.bag = None
         return inferences
 
-    def __is_consistant(self, bag, item, assignment, csp):
+    def __is_consistent(self, bag, item, assignment, csp):
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:
             cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
