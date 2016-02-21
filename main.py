@@ -45,7 +45,8 @@ def main():
                             upper_bound = s[1]
                             for b in bags:
                                 constraint = Constraint(
-                                    Constraint.BAG_FIT_LIMIT, bags=[bags[b]], min_items=lower_bound, max_items=upper_bound)
+                                    Constraint.BAG_FIT_LIMIT, bags=[bags[b]],
+                                    min_items=lower_bound, max_items=upper_bound)
                                 bags[b].constraints.append(constraint)
                         elif current_section == 4:  # Unary inclusive
                             name = s[0]

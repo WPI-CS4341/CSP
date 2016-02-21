@@ -1,6 +1,7 @@
 from constraint import Constraint
 import copy
 
+
 class Solver(object):
 
     def __order_domain_values(self, item, csp):
@@ -35,7 +36,8 @@ class Solver(object):
     def __select_unassigned_variable(self, assigned_items, csp):
         """Select unassigned variable with with fewest legal values"""
         # Initialize legal values for items
-        unassigned_items = {item_name: csp.items[item_name] for item_name in csp.items if item_name not in assigned_items}
+        unassigned_items = {item_name: csp.items[
+            item_name] for item_name in csp.items if item_name not in assigned_items}
         # print unassigned_items
         # Get all unsigned
         unassigned_item_names = unassigned_items.keys()
@@ -53,6 +55,7 @@ class Solver(object):
             # Select when have less possible bag
             if num_remaining_bag < num_min_item:
                 min_item_name = item_name
+
             elif num_remaining_bag == num_min_item:
                 # When have same number of possible bags
                 if num_constrains[item_name] > num_constrains[min_item_name]:
@@ -72,13 +75,15 @@ class Solver(object):
             # Iterate through constraints
             for constraint in csp.items[item_name].constraints:
                 # Binary constraints
-                cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+                cond = (constraint.constraint_type >=
+                        Constraint.BINARY_CONSTRAINT_EQUALITY)
                 if cond:
                     # All items involved in constraint
                     for item in constraint.items:
                         # The other unassigned item
                         if item.name != item_name and item.name in unassigned_item_names:
-                            # Increment number of constraints on other unassigned items
+                            # Increment number of constraints on other
+                            # unassigned items
                             count += 1
             # Save number of constraints for this item
             num_constrains[item_name] = count
@@ -93,15 +98,22 @@ class Solver(object):
     select_unassigned_variable = MRV + degree
     inference = Forward Checking
     """
+
     def __backtrack(self, assigned_items, csp):
         if len(assigned_items) == len(csp.items):
             return assigned_items
 
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assigned_items, csp)
+<<<<<<< HEAD
         # for
         print self.__order_domain_values(item, csp)
         # for bag in __order_domain_values(var, csp):
+=======
+
+        print self.__order_domain_values(item, csp)
+        # for value in __order_domain_values(var, csp):
+>>>>>>> 61549b0007ca1edb263652be4430ef0292a59252
         # if True:
         #         # if value is consistent with assignment
         #         assignment[var] = value
