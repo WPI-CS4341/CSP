@@ -1,4 +1,5 @@
 from constraint import Constraint
+import copy
 
 class Solver(object):
 
@@ -22,17 +23,20 @@ class Solver(object):
         return sorted(vdict, key=lambda k: vdict[k])
 
     # Should return key name of variable
-    def __select_unassigned_variable(self, csp):
+    def __select_unassigned_variable(self, assigned_items, csp):
         """Select unassigned variable with with fewest legal values"""
+        # Initialize legal values for items
+        unassigned_items = {item_name: csp.items[item_name] for item_name in csp.items if item_name not in assigned_items}
+        # print unassigned_items
         # Get all unsigned
-        unassigned_item_names = self.consistent_bags.keys()
+        unassigned_item_names = unassigned_items.keys()
         min_item_name = unassigned_item_names[0]
 
-        num_constrains = self.__get_num_constrains(csp, unassigned_item_names)
+        num_constrains = self.__get_num_constrains(csp, unassigned_items)
 
         for item_name in unassigned_item_names[1:]:
-            num_remaining_bag = len(self.consistent_bags[item_name])
-            num_min_item = len(self.consistent_bags[item_name])
+            num_remaining_bag = len(unassigned_items[item_name].possible_bags)
+            num_min_item = len(unassigned_items[item_name].possible_bags)
 
             if num_remaining_bag < num_min_item:
                 min_item_name = item_name
@@ -40,7 +44,6 @@ class Solver(object):
                 if num_constrains[item_name] > num_constrains[min_item_name]:
                     min_item_name = item_name
 
-        self.consistent_bags.pop(min_item_name)
         return csp.items[min_item_name]
 
     def __get_num_constrains(self, csp, unassigned_item_names):
@@ -75,10 +78,12 @@ class Solver(object):
     select_unassigned_variable = MRV + degree
     inference = Forward Checking
     """
-    def __backtrack(self, items,csp):
-        # if assignment is
-        var = self.__select_unassigned_variable(csp)
-        print var.name
+    def __backtrack(self, assigned_items, csp):
+        if len(assigned_items) == len(csp.items):
+            return assigned_items
+
+        csp = copy.deepcopy(csp)
+        item = self.__select_unassigned_variable(assigned_items, csp)
         # for
         # print self.__order_domain_values(var, csp)
         # for value in __order_domain_values(var, csp):
@@ -94,12 +99,8 @@ class Solver(object):
         #     assignment.pop(var, None)
         #     assignment.pop(inferences, None)  # Won't work
 
-    # def __forward_checking(self, csp, var, value):
-
+    def __forward_checking(self, csp, var, value):
+        return None
 
     def solve(self, csp):
-
-        # Initialize legal values for items
-        self.consistent_bags = {item:csp.bags.copy() for item in csp.items}
-
-        bt = self.__backtrack([], csp)
+        bt = self.__backtrack({}, csp)
