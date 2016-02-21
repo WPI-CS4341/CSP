@@ -1,7 +1,6 @@
 from constraint import Constraint
 import copy
 
-
 class Solver(object):
 
     def __order_domain_values(self, item, csp):
@@ -17,8 +16,10 @@ class Solver(object):
                     num_bag_possible = self.__num_valid_bag(neighbor)
                     count += num_bag_possible
             bags_constrains.append([bag, count])
+            item.bag = None
 
-        return sorted(bags_constrains, key=lambda bag: bag[1], reverse=True)
+        sorted(bags_constrains, key=lambda bag: bag[1], reverse=True)
+        return [item.possible_bags[bag[0]] for bag in bags_constrains]
 
     def __num_valid_bag(self, item):
         count = 0
@@ -30,14 +31,18 @@ class Solver(object):
                     valid = 0
                     break
             count += valid
+
+        item.bag = None
         return count
 
     # Should return key name of variable
-    def __select_unassigned_variable(self, assigned_items, csp):
+    def __select_unassigned_variable(self, assignment, csp):
         """Select unassigned variable with with fewest legal values"""
+
         # Initialize legal values for items
         unassigned_items = {item_name: csp.items[
-            item_name] for item_name in csp.items if item_name not in assigned_items}
+            item_name] for item_name in csp.items if item_name not in assignment}
+
         # print unassigned_items
         # Get all unsigned
         unassigned_item_names = unassigned_items.keys()
@@ -90,8 +95,8 @@ class Solver(object):
         # return dictionary
         return num_constrains
 
-    def __inference(self, csp, var, value):
-        return __forward_checking(csp, var, value)
+    def __inference(self, csp, item, bag, assignment):
+        return self.__forward_checking(csp, item, bag, assignment)
 
     """
     order_domain_values = LCV
@@ -99,35 +104,92 @@ class Solver(object):
     inference = Forward Checking
     """
 
-    def __backtrack(self, assigned_items, csp):
-        if len(assigned_items) == len(csp.items):
-            return assigned_items
+    def __backtrack(self, assignment, csp):
+        if len(assignment) == len(csp.items):
+            return assignment
 
-        csp = copy.deepcopy(csp)
-        item = self.__select_unassigned_variable(assigned_items, csp)
-<<<<<<< HEAD
-        # for
-        print self.__order_domain_values(item, csp)
-        # for bag in __order_domain_values(var, csp):
-=======
+        item = self.__select_unassigned_variable(assignment, csp)
+        assignment[item.name] = []
+        for bag in self.__order_domain_values(item, csp):
+            if self.__is_consistant(bag, item, assignment, csp):
+                # if value is consistent with assignment
+                assignment[item.name].append(bag.name)
+                inferences = self.__inference(csp, item, bag, assignment)
 
-        print self.__order_domain_values(item, csp)
-        # for value in __order_domain_values(var, csp):
->>>>>>> 61549b0007ca1edb263652be4430ef0292a59252
-        # if True:
-        #         # if value is consistent with assignment
-        #         assignment[var] = value
-        #         inferences = __inference(csp, var, value)
-        #         if inferences:
-        #             assignment.append(inferences)  # Won't work
-        #             result = self.backtrack(csp)
-        #             if result:
-        #                 return result
-        #     assignment.pop(var, None)
-        #     assignment.pop(inferences, None)  # Won't work
-
-    def __forward_checking(self, csp, var, value):
+                if inferences is not None and len(inferences) > 0:
+                    assignment.update(inferences)
+                    result = self.__backtrack(assignment, csp)
+                    if result is not None and len(result) > 0:
+                        return result
+                    for inference in inferences:
+                        assignment.pop(inference)
+                assignment[item.name].remove(bag.name)
         return None
+
+    def __forward_checking(self, csp, item, bag, assignment):
+        unassigned_items = {item_name: csp.items[
+            item_name] for item_name in csp.items if item_name not in assignment}
+
+        inferences = {}
+
+        item.bag = bag
+        for constraint in item.constraints:
+            cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+            if cond:
+                neighbor = constraint.get_neighbor(item)
+                possible_bags = self.__clean_up_neighbor(constraint, neighbor)
+                if possible_bags is None:
+                    return None
+
+                inferences[neighbor.name] = possible_bags
+
+        item.bag = None
+        return inferences
+
+    def __is_consistant(self, bag, item, assignment, csp):
+        assigned_item_names = assignment.keys()
+        for constraint in item.constraints:
+            cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+            if cond:
+                neighbor = constraint.get_neighbor(item)
+                if neighbor.name in assigned_item_names:
+                    item.bag = bag
+
+                    for neighbor_bag_name in assignment[neighbor.name]:
+                        neighbor.bag = csp.bags[neighbor_bag_name]
+                        if not constraint.validate():
+                            neighbor.bag = None
+                            item.bag = None
+                            return False
+
+                    neighbor.bag = None
+                    item.bag = None
+        return True
+
+    def __clean_up_neighbor(self, constraint, item):
+        possible_bags = item.possible_bags.copy()
+        possible_bags_loop = item.possible_bags.copy()
+
+        for bag in possible_bags_loop:
+            item.bag = possible_bags[bag]
+            if not constraint.validate():
+                possible_bags.pop(bag)
+        item.bag = None
+        if len(possible_bags) == 0:
+            return None
+        return possible_bags.keys()
 
     def solve(self, csp):
         bt = self.__backtrack({}, csp)
+
+        print bt
+
+        result = {}
+        for bag in csp.bags:
+            result[bag] = []
+
+        for item in bt:
+            for bag in bt[item]:
+                result[bag].append(item)
+
+        return result

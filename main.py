@@ -87,7 +87,8 @@ def main():
 
             csp = CSP(items, bags)
             solver = Solver()
-            solver.solve(csp)
+            solution = solver.solve(csp)
+            print solution
         else:
             # Throw error when cannot open file
             print("Input file does not exist.")
