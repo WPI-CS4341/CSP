@@ -28,6 +28,12 @@ class Constraint(object):
         # Constraint types
         self.constraint_type = constraint_type
 
+    def get_neighbor(self, me):
+        for item in self.items:
+            if item != me:
+                return item
+        return None
+
     def validate(self):
         """Validate the contraint based on constraint type"""
         if self.constraint_type == self.BAG_FIT_LIMIT:
@@ -71,9 +77,9 @@ class Constraint(object):
                 raise ValueError("Constraint type BINARY_CONSTRAINT_INCLUSIVITY \
                         requires two items and at least one bag")
             # Items simultaneously in a given pair of bags
-            both_in_condition = items[
-                0].bag in self.bags and items[1].bag in self.bags
+            both_in_condition = self.items[
+                0].bag in self.bags and self.items[1].bag in self.bags
             # Items simultaneously not in a given pair of bags
-            both_not_in_condition = items[
-                0].bag not in self.bags and items[1].bag not in self.bags
+            both_not_in_condition = self.items[
+                0].bag not in self.bags and self.items[1].bag not in self.bags
             return both_in_condition or both_not_in_condition

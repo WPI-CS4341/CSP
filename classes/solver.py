@@ -3,24 +3,33 @@ import copy
 
 class Solver(object):
 
-    def __order_domain_values(self, var, csp):
-        bags = csp.bags
-        items = csp.items
-        original_bag = csp.items[var].bag
-        vdict = {}
-        for b in bags:
-            current_bag = bags[b]
-            csp.items[var].bag = current_bag
-            violations = 0
-            for ic in items[var].constraints:
-                if ic.validate() is False:
-                    violations += 1
-            for bc in current_bag.constraints:
-                if bc.validate() is False:
-                    violations += 1
-            vdict[current_bag] = violations
-        items[var] = original_bag
-        return sorted(vdict, key=lambda k: vdict[k])
+    def __order_domain_values(self, item, csp):
+        bags_constrains = []
+
+        for bag in item.possible_bags.keys()[1:]:
+            item.bag = item.possible_bags[bag]
+            count = 0
+            for constraint in item.constraints:
+                cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+                if cond:
+                    neighbor = constraint.get_neighbor(item)
+                    num_bag_possible = self.__num_valid_bag(neighbor)
+                    count += num_bag_possible
+            bags_constrains.append([bag, count])
+
+        return sorted(bags_constrains, key=lambda bag: bag[1], reverse=True)
+
+    def __num_valid_bag(self, item):
+        count = 0
+        for bag in item.possible_bags:
+            item.bag = item.possible_bags[bag]
+            valid = 1
+            for constraint in item.constraints:
+                if not constraint.validate():
+                    valid = 0
+                    break
+            count += valid
+        return count
 
     # Should return key name of variable
     def __select_unassigned_variable(self, assigned_items, csp):
@@ -32,16 +41,22 @@ class Solver(object):
         unassigned_item_names = unassigned_items.keys()
         min_item_name = unassigned_item_names[0]
 
+        # Get number of constraints of each unassigned item
         num_constrains = self.__get_num_constrains(csp, unassigned_items)
 
+        # Find the item with least possible bags
         for item_name in unassigned_item_names[1:]:
+            # Number possible_bags
             num_remaining_bag = len(unassigned_items[item_name].possible_bags)
             num_min_item = len(unassigned_items[item_name].possible_bags)
 
+            # Select when have less possible bag
             if num_remaining_bag < num_min_item:
                 min_item_name = item_name
-            else :
+            elif num_remaining_bag == num_min_item:
+                # When have same number of possible bags
                 if num_constrains[item_name] > num_constrains[min_item_name]:
+                    # Select the one with maximum constraints
                     min_item_name = item_name
 
         return csp.items[min_item_name]
@@ -85,8 +100,8 @@ class Solver(object):
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assigned_items, csp)
         # for
-        # print self.__order_domain_values(var, csp)
-        # for value in __order_domain_values(var, csp):
+        print self.__order_domain_values(item, csp)
+        # for bag in __order_domain_values(var, csp):
         # if True:
         #         # if value is consistent with assignment
         #         assignment[var] = value

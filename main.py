@@ -58,6 +58,7 @@ def main():
                             reject_bags = [bags[k] for k in s[1:]]
                             constraint = Constraint(Constraint.UNARY_CONSTRAINT_NOT_IN_BAGS, items=[
                                                     items[name]], bags=reject_bags)
+
                             items[name].constraints.append(constraint)
                         elif current_section == 6:  # Binary equals
                             item1 = s[0]

@@ -24,7 +24,6 @@ A c
 C a b e
 F d
 ##### - binary equals
-G I
 D E
 ##### - binary not equals
 H I
