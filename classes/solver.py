@@ -10,7 +10,8 @@ class Solver(object):
             item.bag = item.possible_bags[bag]
             count = 0
             for constraint in item.constraints:
-                cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+                cond = (constraint.constraint_type >=
+                        Constraint.BINARY_CONSTRAINT_EQUALITY)
                 if cond:
                     neighbor = constraint.get_neighbor(item)
                     num_bag_possible = self.__num_valid_bag(neighbor)
@@ -103,7 +104,6 @@ class Solver(object):
     select_unassigned_variable = MRV + degree
     inference = Forward Checking
     """
-
     def __backtrack(self, assignment, csp):
         if len(assignment) == len(csp.items):
             return assignment
