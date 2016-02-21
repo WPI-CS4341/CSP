@@ -11,7 +11,8 @@ class Solver(object):
             item.bag = item.possible_bags[bag]
             count = 0
             for constraint in item.constraints:
-                cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+                cond = (constraint.constraint_type >=
+                        Constraint.BINARY_CONSTRAINT_EQUALITY)
                 if cond:
                     neighbor = constraint.get_neighbor(item)
                     num_bag_possible = self.__num_valid_bag(neighbor)
@@ -105,26 +106,20 @@ class Solver(object):
 
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assigned_items, csp)
-<<<<<<< HEAD
-        # for
-        print self.__order_domain_values(item, csp)
-        # for bag in __order_domain_values(var, csp):
-=======
 
         print self.__order_domain_values(item, csp)
         # for value in __order_domain_values(var, csp):
->>>>>>> 61549b0007ca1edb263652be4430ef0292a59252
-        # if True:
-        #         # if value is consistent with assignment
-        #         assignment[var] = value
-        #         inferences = __inference(csp, var, value)
-        #         if inferences:
-        #             assignment.append(inferences)  # Won't work
-        #             result = self.backtrack(csp)
-        #             if result:
-        #                 return result
-        #     assignment.pop(var, None)
-        #     assignment.pop(inferences, None)  # Won't work
+# if True:
+#         # if value is consistent with assignment
+#         assignment[var] = value
+#         inferences = __inference(csp, var, value)
+#         if inferences:
+#             assignment.append(inferences)  # Won't work
+#             result = self.backtrack(csp)
+#             if result:
+#                 return result
+#     assignment.pop(var, None)
+#     assignment.pop(inferences, None)  # Won't work
 
     def __forward_checking(self, csp, var, value):
         return None
