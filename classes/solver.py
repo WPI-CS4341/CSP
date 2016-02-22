@@ -208,7 +208,7 @@ class Solver(object):
             if not constraint.validate():
                 item.possible_bags.pop(bag)
             item.bag = None
-        
+
         if len(possible_bags) == 0:
             return None
         return possible_bags.keys()

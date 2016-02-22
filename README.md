@@ -23,7 +23,7 @@ In terms of [search heuristics](https://www.cs.unc.edu/~lazebnik/fall10/lec08_cs
 The minimum-remaining-values (MRV) heuristic chooses the next variable to seek assignment by examining how many constraints that variable imposes on remaining variables, and choosing the one with the most constraints. If there is a tie, a degree heuristic is used to determine which variable will be chosen. The MRV implementation used in this program can be represented using the following pseudocode:
 
 ```
-SELECT-UNASSIGNED-VARIABLE(self, assigned_items, csp):
+SELECT-UNASSIGNED-VARIABLE(assignment, csp):
     unassigned as a collection of currently unassigned variables
     min as first unassigned variable in collection
 
@@ -45,3 +45,58 @@ SELECT-UNASSIGNED-VARIABLE(self, assigned_items, csp):
 
 ### LCV
 The least-constraining-value (LCV) heuristic is used to sort the list of values during backtracking in the order of the least constraining to most constraining. This property is measured by how many values a given value "rules out" among other variables. In other words, the least constraining value would be a value that, when assigned to a variable, would give other variables the maximum number of options to choose from. This can be represented via the following pseudocode:
+
+```
+ORDER-DOMAIN-VALUES(var, csp):
+    constraints as a collection of value constraints
+    values as a collection of possible values to be selected
+
+    for each val in values:
+        count as a count of all possible values for var
+
+        for each constraint on var:
+            if the constraint is binary:
+                neighbor = GET-NEIGHBOR(constraint, var)
+                count += COUNT-VALID-VALUES(neighbor)
+        constraints.add([value, count])
+        var.value = NULL
+
+    constraints = SORT-INCREASING(constraints, count)
+    return INTERSECTION(constraints, values)
+```
+
+## Evaluation
+To test the program, we ran the solver against 26 input files (all contained in the `test` directory). We found the program executed quickly, finding a solution in only a matter of seconds. However, while a number of the solutions matched the expected output files for their respective inputs, we also found that there were some solutions that arrived at answers different than those expected. In addition, we found that there were some problems which were calculated to have no solution, when in fact there was a solution. We imagine this may have been a result of an error in the program's consistency check when the backtracking algorithm terminates. However, due to time constraints, this issue could not fully investigated and may still lead to some percent error.
+
+As a result, the solver succeeds in terms of speed, but may lack in terms of accuracy. The heuristics used in the program lend themselves to calculating solutions in a matter of seconds, however, the solutions delivered may not always be the most ideal solutions possible.
+
+A measurement of the speed given the algorithms and heuristics used in this program can be outline as follows:
+
+| Problem | Backtracking | BT+MRV | Forward Checking | FC+MRV |
+|---------|--------------|--------|------------------|--------|
+| 1       |              |        |                  |        |
+| 2       |              |        |                  |        |
+| 3       |              |        |                  |        |
+| 4       |              |        |                  |        |
+| 5       |              |        |                  |        |
+| 6       |              |        |                  |        |
+| 7       |              |        |                  |        |
+| 8       |              |        |                  |        |
+| 9       |              |        |                  |        |
+| 10      |              |        |                  |        |
+| 11      |              |        |                  |        |
+| 12      |              |        |                  |        |
+| 13      |              |        |                  |        |
+| 14      |              |        |                  |        |
+| 15      |              |        |                  |        |
+| 16      |              |        |                  |        |
+| 17      |              |        |                  |        |
+| 18      |              |        |                  |        |
+| 19      |              |        |                  |        |
+| 20      |              |        |                  |        |
+| 21      |              |        |                  |        |
+| 22      |              |        |                  |        |
+| 23      |              |        |                  |        |
+| 24      |              |        |                  |        |
+| 25      |              |        |                  |        |
+| 26      |              |        |                  |        |
