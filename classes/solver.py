@@ -79,7 +79,7 @@ class Solver(object):
     def __possible_bags(self, item, csp):
         bags = {}
         for bag in csp.bags:
-            if csp.bags[bag].has_capcity(item):
+            if csp.bags[bag].in_capcity(item) and csp.bags[bag].bag_fit_limit(item):
                 # print item.name + " " + bag
                 bags[bag] = csp.bags[bag]
 
@@ -177,8 +177,10 @@ class Solver(object):
         return inferences
 
     def __is_consistant(self, bag, item, assignment, csp):
-        if not bag.has_capcity(item):
+        if not bag.in_capcity(item) and csp.bags[bag].bag_fit_limit(item):
             return False
+
+
 
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:

@@ -1,4 +1,7 @@
+import math
+
 class Bag(object):
+    ALMOST_FULL = 0.9
 
     def __init__(self, name, capacity):
         # Name of bag
@@ -13,17 +16,22 @@ class Bag(object):
     def __weight(self, weight, item):
         return item.weight + weight
 
-    def has_capcity(self, item):
+    def in_capcity(self, item):
         weight = reduce(self.__weight, self.items, 0)
-        if item.weight + weight <= self.capacity:
-            for constraint in self.constraints:
-                self.items.append(item)
-                if not constraint.validate():
-                    self.items.remove(item)
-                    return False
-                self.items.remove(item)
+        if math.floor(self.capacity * Bag.ALMOST_FULL) <= item.weight + weight <= self.capacity:
+            # The bag is not full
             return True
         return False
+
+    def bag_fit_limit(self, item):
+        for constraint in self.constraints:
+            # Validate number of items in the bag
+            self.items.append(item)
+            if not constraint.validate():
+                self.items.remove(item)
+                return False
+            self.items.remove(item)
+        return True
 
     def __eq__(self, other):
         if isinstance(other, Bag):
