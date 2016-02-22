@@ -12,7 +12,7 @@ where `<filename>` is the filename of the input file. 26 test input files and th
 
 ## Under the Hood
 ### Search
-For maximum efficiency, this program uses [backtracking search](https://en.wikipedia.org/wiki/Backtracking), partnered with [forward search](https://en.wikipedia.org/wiki/State_space_planning#Forward_Search) to reach a desired solution. This approach was chosen due to its speed, it allows for the pruning of unnecessary search nodes, minimizing the total number of possibilities that need to be explored and maximizing the speed in which a solution is found.
+For maximum efficiency, this program uses [backtracking search](https://en.wikipedia.org/wiki/Backtracking), partnered with [forward search](https://en.wikipedia.org/wiki/Look-ahead_(backtracking)) to reach a desired solution. This approach was chosen due to its speed, it allows for the pruning of unnecessary search nodes, minimizing the total number of possibilities that need to be explored and maximizing the speed in which a solution is found.
 
 `<INCLUDE-PSEUDOCODE>`
 
