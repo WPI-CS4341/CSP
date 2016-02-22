@@ -1,3 +1,6 @@
+"""
+Written by Harry Liu (yliu17) and Tyler Nickerson (tjnickerson)
+"""
 import sys
 import os.path
 import pprint
@@ -89,6 +92,7 @@ def main():
             solver = Solver()
             solution = solver.solve(csp)
 
+            # Output the solution
             if solution is not None:
                 keys = solution.keys()
                 keys.sort()
