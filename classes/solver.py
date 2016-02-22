@@ -7,7 +7,6 @@ class Solver(object):
     def __order_domain_values(self, item, csp):
         bags_constraints = []
         possible_bags = self.__possible_bags(item, csp)
-        # print item.name
         # print possible_bags
         for bag in possible_bags:
             possible_bags[bag]
@@ -78,6 +77,11 @@ class Solver(object):
         return csp.items[min_item_name]
 
     def __possible_bags(self, item, csp):
+        if item.name == "D":
+            for bag in csp.bags:
+                for item in csp.bags[bag].items:
+                    print item
+
         bags = {}
         for bag in csp.bags:
             if csp.bags[bag].has_capcity(item):
@@ -114,32 +118,30 @@ class Solver(object):
     def __inference(self, csp, item, bag, assignment):
         return self.__forward_checking(csp, item, bag, assignment)
 
-    def __complete(self, assignment):
-        for item in assignment:
-            if len(assignment[item]) == 0:
-                return False
-        return True
+    def __complete(self, assignment, csp):
+        # print assignment
+        return len(assignment) == len(csp.items)
 
     def __backtrack(self, assignment, csp):
-        self.__complete(assignment)
+        if self.__complete(assignment, csp):
+            return assignment
 
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assignment, csp)
 
-        assignment[item.name] = []
+        if item.name == "D":
+            print self.__order_domain_values(item, csp)
         for bag in self.__order_domain_values(item, csp):
-            # print item.name + " " +bag.name
             if self.__is_consistant(bag, item, assignment, csp):
-                print "sfsfds"
-                print item.name
+
+                if item.name not in assignment:
+                    assignment[item.name] = []
+
                 assignment[item.name].append(bag.name)
                 bag.items.append(item)
 
                 inferences = self.__inference(csp, item, bag, assignment)
                 if inferences is not None:
-                    print "++++"
-                    print assignment
-                    print "----"
                     assignment.update(inferences)
                     # print assignment
                     result = self.__backtrack(assignment, csp)
@@ -154,7 +156,9 @@ class Solver(object):
                     for inference in inferences:
                         assignment.pop(inference)
 
-                assignment = {item:assignment[item] for item in assignment if len(assignment[item]) > 0}
+                assignment[item.name].remove(bag.name)
+                if len(assignment[item.name]) == 0:
+                    assignment.pop(item.name)
         return None
 
     def __forward_checking(self, csp, item, bag, assignment):
