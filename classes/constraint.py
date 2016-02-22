@@ -18,9 +18,9 @@ class Constraint(object):
     def __init__(self, constraint_type, min_items=-1, max_items=-1, items=[], bags=[]):
         """Initalize the constraint"""
         # minimum number of items in the bag
-        self.min_items = min_items
+        self.min_items = int(min_items)
         # Maximum number of items in the bag
-        self.max_items = max_items
+        self.max_items = int(max_items)
         # Related items
         self.items = items
         # Related bags

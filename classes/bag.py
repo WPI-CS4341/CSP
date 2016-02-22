@@ -16,6 +16,12 @@ class Bag(object):
     def has_capcity(self, item):
         weight = reduce(self.__weight, self.items, 0)
         if item.weight + weight <= self.capacity:
+            for constraint in self.constraints:
+                self.items.append(item)
+                if not constraint.validate():
+                    self.items.remove(item)
+                    return False
+                self.items.remove(item)
             return True
         return False
 

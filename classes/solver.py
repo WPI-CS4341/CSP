@@ -6,9 +6,7 @@ class Solver(object):
 
     def __order_domain_values(self, item, csp):
         bags_constraints = []
-
         possible_bags = self.__possible_bags(item, csp)
-
 
         # print possible_bags
         for bag in possible_bags:
