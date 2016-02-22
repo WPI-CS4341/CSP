@@ -18,7 +18,11 @@ class Bag(object):
 
     def in_capcity(self, item):
         weight = reduce(self.__weight, self.items, 0)
-        if math.floor(self.capacity * Bag.ALMOST_FULL) <= item.weight + weight <= self.capacity:
+        if math.floor(self.capacity * Bag.ALMOST_FULL) <= weight:
+            return False
+
+        if item.weight + weight <= self.capacity:
+
             # The bag is not full
             return True
         return False

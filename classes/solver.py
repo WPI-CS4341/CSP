@@ -19,6 +19,7 @@ class Solver(object):
                     neighbor = constraint.get_neighbor(item)
                     num_bag_possible = self.__num_valid_bag(neighbor)
                     count += num_bag_possible
+
             bags_constraints.append([bag, count])
             item.bag = None
 
@@ -78,9 +79,8 @@ class Solver(object):
 
     def __possible_bags(self, item, csp):
         bags = {}
-        for bag in csp.bags:
-            if csp.bags[bag].in_capcity(item) and csp.bags[bag].bag_fit_limit(item):
-                # print item.name + " " + bag
+        for bag in item.possible_bags:
+            if item.possible_bags[bag].in_capcity(item) and item.possible_bags[bag].bag_fit_limit(item):
                 bags[bag] = csp.bags[bag]
 
         return bags
@@ -180,8 +180,6 @@ class Solver(object):
         if not bag.in_capcity(item) and csp.bags[bag].bag_fit_limit(item):
             return False
 
-
-
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:
             cond = (constraint.constraint_type >=
@@ -203,20 +201,22 @@ class Solver(object):
         return True
 
     def __clean_up_neighbor(self, constraint, item, csp):
-        print "+++++++++++++++++"
-        possible_bags = item
-        possible_bags_loop = item.possible_bags.copy()
+        possible_bags = self.__possible_bags(item, csp)
 
-        for bag in possible_bags_loop:
+        for bag in possible_bags:
             item.bag = possible_bags[bag]
             if not constraint.validate():
-                possible_bags.pop(bag)
-        item.bag = None
+                item.possible_bags.pop(bag)
+            item.bag = None
+        
         if len(possible_bags) == 0:
             return None
         return possible_bags.keys()
 
     def solve(self, csp):
+        for item in csp.items:
+            csp.items[item].possible_bags = csp.bags.copy()
+
         bt = self.__backtrack({}, csp)
 
         result = {}
