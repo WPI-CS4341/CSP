@@ -1,10 +1,13 @@
 from item import Item
-from bag import Bag
 
 
 class Constraint(object):
     # Bag fit constraint
     BAG_FIT_LIMIT = 1
+
+    BAG_ITEM_GOOD = 0
+    BAG_ITEM_TOO_MUCH = -1
+    BAG_ITEM_NOT_ENOUGH = 1
 
     # Unary constraints
     UNARY_CONSTRAINT_IN_BAGS = 2
@@ -34,16 +37,25 @@ class Constraint(object):
                 return item
         return None
 
-    def validate(self):
-        """Validate the contraint based on constraint type"""
+    def bag_fit_limit(self):
         if self.constraint_type == self.BAG_FIT_LIMIT:
             # Check for required variables
             if self.min_items < 0 or self.max_items < 0:
                 raise ValueError("Constraint type BAG_FIT_LIMIT requires \
                     non-negative min_items and max_items values and one bag")
             # The number of item in bag must between x and y
-            return self.min_items <= len(self.bags[0].items) <= self.max_items
-        elif self.constraint_type == self.UNARY_CONSTRAINT_IN_BAGS:
+
+            if len(self.bags[0].items) < self.min_items:
+                return Constraint.BAG_ITEM_NOT_ENOUGH
+            elif len(self.bags[0].items) > self.max_items:
+                return Constraint.BAG_ITEM_TOO_MUCH
+            return Constraint.BAG_ITEM_GOOD
+
+        return -2
+
+    def validate(self):
+        """Validate the contraint based on constraint type"""
+        if self.constraint_type == self.UNARY_CONSTRAINT_IN_BAGS:
             # Check for required variables
             if len(self.items) < 1 or len(self.bags) < 1:
                 raise ValueError("Constraint type UNARY_CONSTRAINT_IN_BAGS \

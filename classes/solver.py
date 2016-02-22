@@ -10,7 +10,6 @@ class Solver(object):
 
         # print possible_bags
         for bag in possible_bags:
-            possible_bags[bag]
             count = 0
             for constraint in item.constraints:
                 cond = (constraint.constraint_type >=
@@ -25,8 +24,6 @@ class Solver(object):
 
         sorted(bags_constraints, key=lambda bag: bag[1], reverse=True)
         bags = [possible_bags[bag[0]] for bag in bags_constraints]
-        # print item.name
-        # print bags
         return bags
 
     def __num_valid_bag(self, item):
@@ -80,7 +77,7 @@ class Solver(object):
     def __possible_bags(self, item, csp):
         bags = {}
         for bag in item.possible_bags:
-            if item.possible_bags[bag].in_capcity(item) and item.possible_bags[bag].bag_fit_limit(item):
+            if item.possible_bags[bag].in_capcity(item):
                 bags[bag] = csp.bags[bag]
 
         return bags
@@ -157,27 +154,27 @@ class Solver(object):
         return None
 
     def __forward_checking(self, csp, item, bag, assignment):
-        unassigned_items = {item_name: csp.items[
-            item_name] for item_name in csp.items if item_name not in assignment}
+        unassigned_items = {item_name: csp.items[item_name] for item_name in csp.items if item_name not in assignment}
 
         inferences = {}
-        item.bag = bag
         for constraint in item.constraints:
             cond = (constraint.constraint_type >=
                     Constraint.BINARY_CONSTRAINT_EQUALITY)
             if cond:
+                item.bag = bag
                 neighbor = constraint.get_neighbor(item)
                 possible_bags = self.__clean_up_neighbor(constraint, neighbor, csp)
+                item.bag = None
                 if possible_bags is None:
+                    item.bag = None
                     return None
 
                 inferences[neighbor.name] = possible_bags
 
-        item.bag = None
         return inferences
 
     def __is_consistant(self, bag, item, assignment, csp):
-        if not bag.in_capcity(item) and csp.bags[bag].bag_fit_limit(item):
+        if not bag.in_capcity(item):
             return False
 
         assigned_item_names = assignment.keys()
@@ -205,13 +202,15 @@ class Solver(object):
 
         for bag in possible_bags:
             item.bag = possible_bags[bag]
+
             if not constraint.validate():
                 item.possible_bags.pop(bag)
             item.bag = None
-        
+
         if len(possible_bags) == 0:
             return None
-        return possible_bags.keys()
+
+        return self.__possible_bags(item, csp)
 
     def solve(self, csp):
         for item in csp.items:
