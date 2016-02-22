@@ -6,9 +6,7 @@ It is extremely simple to run the CSP solver. Just `cd` into the source director
 
 `python main.py <filename>`
 
-where `<filename>` is the filename of the input file. 26 test input files and their expected outputs can be found in the `test` directory. Or, if you want to run every test at once, simply run:
-
-`<CHANGE-ME>`
+where `<filename>` is the filename of the input file. 26 test input files and their expected outputs can be found in the `test` directory.
 
 ## Under the Hood
 ### Search
@@ -70,33 +68,12 @@ To test the program, we ran the solver against 26 input files (all contained in 
 
 As a result, the solver succeeds in terms of speed, but may lack in terms of accuracy. The heuristics used in the program lend themselves to calculating solutions in a matter of seconds, however, the solutions delivered may not always be the most ideal solutions possible.
 
-A measurement of the speed given the algorithms and heuristics used in this program can be outline as follows:
+A comparison of the algorithms and heuristics used in this program can be found in the table below, running the program on the first five test files. The value for each problem denotes how many times a consistency check was run during the problem's evaluation.
 
-| Problem | Backtracking | BT+MRV | Forward Checking | FC+MRV |
-|---------|--------------|--------|------------------|--------|
-| 1       |              |        |                  |        |
-| 2       |              |        |                  |        |
-| 3       |              |        |                  |        |
-| 4       |              |        |                  |        |
-| 5       |              |        |                  |        |
-| 6       |              |        |                  |        |
-| 7       |              |        |                  |        |
-| 8       |              |        |                  |        |
-| 9       |              |        |                  |        |
-| 10      |              |        |                  |        |
-| 11      |              |        |                  |        |
-| 12      |              |        |                  |        |
-| 13      |              |        |                  |        |
-| 14      |              |        |                  |        |
-| 15      |              |        |                  |        |
-| 16      |              |        |                  |        |
-| 17      |              |        |                  |        |
-| 18      |              |        |                  |        |
-| 19      |              |        |                  |        |
-| 20      |              |        |                  |        |
-| 21      |              |        |                  |        |
-| 22      |              |        |                  |        |
-| 23      |              |        |                  |        |
-| 24      |              |        |                  |        |
-| 25      |              |        |                  |        |
-| 26      |              |        |                  |        |
+Problem | Backtracking | BT+MRV | Forward Checking | FC+MRV
+------- | ------------ | ------ | ---------------- | ------
+1       | 1            | 1      | 1                | 1
+2       | 2            | 2      | 2                | 2
+3       | 3            | 3      | 3                | 3
+4       | 12           | 7      | 12               | 7
+5       | 18           | 18     | 18               | 18
