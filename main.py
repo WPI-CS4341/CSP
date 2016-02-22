@@ -90,7 +90,9 @@ def main():
             solution = solver.solve(csp)
 
             if solution is not None:
-                for bag in solution:
+                keys = solution.keys()
+                keys.sort()
+                for bag in keys:
                     total_weight = sum(items[x].weight for x in solution[bag])
                     print bag + " " + " ".join(solution[bag])
                     print "number of items: " + str(len(solution[bag]))
