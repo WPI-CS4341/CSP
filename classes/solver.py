@@ -6,7 +6,10 @@ class Solver(object):
 
     def __order_domain_values(self, item, csp):
         bags_constraints = []
+
         possible_bags = self.__possible_bags(item, csp)
+
+
         # print possible_bags
         for bag in possible_bags:
             possible_bags[bag]
@@ -76,14 +79,10 @@ class Solver(object):
         return csp.items[min_item_name]
 
     def __possible_bags(self, item, csp):
-        if item.name == "D":
-            for bag in csp.bags:
-                for item in csp.bags[bag].items:
-                    print item
-
         bags = {}
         for bag in csp.bags:
             if csp.bags[bag].has_capcity(item):
+                # print item.name + " " + bag
                 bags[bag] = csp.bags[bag]
 
         return bags
@@ -128,8 +127,6 @@ class Solver(object):
         csp = copy.deepcopy(csp)
         item = self.__select_unassigned_variable(assignment, csp)
 
-        if item.name == "D":
-            print self.__order_domain_values(item, csp)
         for bag in self.__order_domain_values(item, csp):
             if self.__is_consistant(bag, item, assignment, csp):
 
@@ -154,7 +151,8 @@ class Solver(object):
                         return result
                     for inference in inferences:
                         assignment.pop(inference)
-                        
+
+                bag.items.remove(item)
                 assignment[item.name].remove(bag.name)
                 if len(assignment[item.name]) == 0:
                     assignment.pop(item.name)
