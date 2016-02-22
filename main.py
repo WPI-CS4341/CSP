@@ -88,7 +88,16 @@ def main():
             csp = CSP(items, bags)
             solver = Solver()
             solution = solver.solve(csp)
-            print solution
+
+            if solution is not None:
+                for bag in solution:
+                    total_weight = sum(items[x].weight for x in solution[bag])
+                    print bag + " " + " ".join(solution[bag])
+                    print "number of items: " + str(len(solution[bag]))
+                    print "total weight " + str(total_weight) + "/" + str(bags[bag].capacity)
+                    print "wasted capacity: " + str(bags[bag].capacity - total_weight) + "\n"
+            else:
+                print "No solution!"
         else:
             # Throw error when cannot open file
             print("Input file does not exist.")
