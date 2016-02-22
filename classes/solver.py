@@ -49,7 +49,6 @@ class Solver(object):
         unassigned_items = {item_name: csp.items[
             item_name] for item_name in csp.items if item_name not in assignment}
 
-        # print unassigned_items
         # Get all unsigned
         unassigned_item_names = unassigned_items.keys()
         min_item_name = unassigned_item_names[0]
@@ -155,7 +154,7 @@ class Solver(object):
                         return result
                     for inference in inferences:
                         assignment.pop(inference)
-
+                        
                 assignment[item.name].remove(bag.name)
                 if len(assignment[item.name]) == 0:
                     assignment.pop(item.name)
@@ -168,7 +167,8 @@ class Solver(object):
         inferences = {}
         item.bag = bag
         for constraint in item.constraints:
-            cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+            cond = (constraint.constraint_type >=
+                    Constraint.BINARY_CONSTRAINT_EQUALITY)
             if cond:
                 neighbor = constraint.get_neighbor(item)
                 possible_bags = self.__clean_up_neighbor(constraint, neighbor, csp)
@@ -186,7 +186,8 @@ class Solver(object):
 
         assigned_item_names = assignment.keys()
         for constraint in item.constraints:
-            cond = (constraint.constraint_type >= Constraint.BINARY_CONSTRAINT_EQUALITY)
+            cond = (constraint.constraint_type >=
+                    Constraint.BINARY_CONSTRAINT_EQUALITY)
             if cond:
                 neighbor = constraint.get_neighbor(item)
                 if neighbor.name in assigned_item_names:
