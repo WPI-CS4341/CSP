@@ -89,6 +89,7 @@ def main():
             solver = Solver()
             solution = solver.solve(csp)
 
+            # Output the solution
             if solution is not None:
                 keys = solution.keys()
                 keys.sort()
