@@ -12,8 +12,6 @@ where `<filename>` is the filename of the input file. 26 test input files and th
 ### Search
 For maximum efficiency, this program uses [backtracking search](https://en.wikipedia.org/wiki/Backtracking), partnered with [forward search](https://en.wikipedia.org/wiki/Look-ahead_(backtracking)) to reach a desired solution. This approach was chosen due to its speed, it allows for the pruning of unnecessary search nodes, minimizing the total number of possibilities that need to be explored and maximizing the speed in which a solution is found.
 
-`<INCLUDE-PSEUDOCODE>`
-
 ### Heuristics
 In terms of [search heuristics](https://www.cs.unc.edu/~lazebnik/fall10/lec08_csp2.pdf), this program the minimum-remaining-values heuristic to select the next unassigned variable (item), then tries different values (bags) as sorted by the least-constraining-value heuristic.
 
