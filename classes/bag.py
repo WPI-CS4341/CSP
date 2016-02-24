@@ -1,5 +1,6 @@
 import math
-from constraint import Constraint
+from .constraint import Constraint
+from functools import reduce
 
 class Bag(object):
     ALMOST_FULL = 0.9
@@ -20,38 +21,39 @@ class Bag(object):
     def __total_weight(self):
         return reduce(self.__weight, self.items, 0)
 
-    def __is_ninety_percent_full(self):
+    def is_ninety_percent_full(self):
         weight = self.__total_weight()
         if math.floor(self.capacity * Bag.ALMOST_FULL) <= weight:
             return True
         return False
 
-    def in_capcity(self, item):
+    def in_capacity(self, item):
         weight = self.__total_weight()
         if item.weight + weight <= self.capacity:
             # The bag is not full
-
-            result = self.__bag_fit_limit(item)
-
-            if result == Constraint.BAG_ITEM_NOT_ENOUGH:
-                return True
-            elif result == Constraint.BAG_ITEM_TOO_MUCH:
+            if not self.__fit_upper_limit(item):
                 return False
-            elif self.__is_ninety_percent_full():
-                return False
-
             return True
         return False
 
-    def __bag_fit_limit(self, item):
+    def __fit_upper_limit(self, item):
         for constraint in self.constraints:
             # Validate number of items in the bag
             self.items.append(item)
             result = constraint.bag_fit_limit()
             self.items.remove(item)
-            if result != Constraint.BAG_ITEM_GOOD:
-                return result
-        return Constraint.BAG_ITEM_GOOD
+            if result == Constraint.BAG_ITEM_TOO_MUCH:
+                return False
+        return True
+
+
+    def fit_lower_limit(self):
+        for constraint in self.constraints:
+            # Validate number of items in the bag
+            result = constraint.bag_fit_limit()
+            if result == Constraint.BAG_ITEM_NOT_ENOUGH:
+                return False
+        return True
 
     def __eq__(self, other):
         if isinstance(other, Bag):

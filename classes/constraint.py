@@ -1,4 +1,4 @@
-from item import Item
+from .item import Item
 
 
 class Constraint(object):
@@ -19,7 +19,7 @@ class Constraint(object):
     BINARY_CONSTRAINT_INCLUSIVITY = 6
 
     def __init__(self, constraint_type, min_items=-1, max_items=-1, items=[], bags=[]):
-        """Initalize the constraint"""
+        """Initialize the constraint"""
         # minimum number of items in the bag
         self.min_items = int(min_items)
         # Maximum number of items in the bag
@@ -61,14 +61,23 @@ class Constraint(object):
                 raise ValueError("Constraint type UNARY_CONSTRAINT_IN_BAGS \
                     requires one item and one bag")
             # The item must in the bag
-            return self.items[0] in self.bags[0].items
+            for bag in self.bags:
+                if self.items[0].bag == bag:
+                    return True
+
+            return False
+
         elif self.constraint_type == self.UNARY_CONSTRAINT_NOT_IN_BAGS:
             # Check for required variables
             if len(self.items) < 1 or len(self.bags) < 1:
                 raise ValueError("Constraint type UNARY_CONSTRAINT_NOT_IN_BAGS \
                     requires one item and one bag")
             # The item must not in the bag
-            return self.items[0] not in self.bags[0].items
+            for bag in self.bags:
+                cond = self.items[0] not in bag.items
+                if not cond:
+                    return False
+            return True
         elif self.constraint_type == self.BINARY_CONSTRAINT_EQUALITY:
             # Check for required variables
             if len(self.items) < 2:

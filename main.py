@@ -15,9 +15,9 @@ def main():
     # Read command line arguments
     args = sys.argv[1:]
     # More than 1 argument supplied
-    if len(args) > 0:
-        # Get data filename
-        filename = args[0]
+    if len(args) > 1:
+        # Get data inputfilename
+        inputfilename = args[0]
         # Bags
         bags = {}
         # Items
@@ -25,8 +25,8 @@ def main():
         # Section tracker
         current_section = 0
         # Read each line and add to the examples and output lists
-        if os.path.isfile(filename):
-            with open(filename, "r") as infile:
+        if os.path.isfile(inputfilename):
+            with open(inputfilename, "r") as infile:
                 for line in infile:
                     # If the line is a comment, increment the section counter
                     if line[:5].strip() == "#####":
@@ -55,27 +55,27 @@ def main():
                             name = s[0]
                             require_bags = [bags[k] for k in s[1:]]
                             constraint = Constraint(Constraint.UNARY_CONSTRAINT_IN_BAGS, items=[
-                                                    items[name]], bags=require_bags)
+                                items[name]], bags=require_bags)
                             items[name].constraints.append(constraint)
                         elif current_section == 5:  # Unary exclusive
                             name = s[0]
                             reject_bags = [bags[k] for k in s[1:]]
                             constraint = Constraint(Constraint.UNARY_CONSTRAINT_NOT_IN_BAGS, items=[
-                                                    items[name]], bags=reject_bags)
+                                items[name]], bags=reject_bags)
 
                             items[name].constraints.append(constraint)
                         elif current_section == 6:  # Binary equals
                             item1 = s[0]
                             item2 = s[1]
                             constraint = Constraint(Constraint.BINARY_CONSTRAINT_EQUALITY, items=[
-                                                    items[item1], items[item2]])
+                                items[item1], items[item2]])
                             for i in [item1, item2]:
                                 items[i].constraints.append(constraint)
                         elif current_section == 7:  # Binary not equals
                             item1 = s[0]
                             item2 = s[1]
                             constraint = Constraint(Constraint.BINARY_CONSTRAINT_INEQUALITY, items=[
-                                                    items[item1], items[item2]])
+                                items[item1], items[item2]])
                             for i in [item1, item2]:
                                 items[i].constraints.append(constraint)
                         elif current_section == 8:  # Binary inclusive
@@ -84,7 +84,7 @@ def main():
                             value1 = s[2]
                             value2 = s[3]
                             constraint = Constraint(Constraint.BINARY_CONSTRAINT_INCLUSIVITY, items=[
-                                                    items[item1], items[item2]], bags=[bags[value1], bags[value2]])
+                                items[item1], items[item2]], bags=[bags[value1], bags[value2]])
                             items[item1].constraints.append(constraint)
                             items[item2].constraints.append(constraint)
 
@@ -93,23 +93,26 @@ def main():
             solution = solver.solve(csp)
 
             # Output the solution
-            if solution is not None:
-                keys = solution.keys()
-                keys.sort()
-                for bag in keys:
-                    total_weight = sum(items[x].weight for x in solution[bag])
-                    print bag + " " + " ".join(solution[bag])
-                    print "number of items: " + str(len(solution[bag]))
-                    print "total weight " + str(total_weight) + "/" + str(bags[bag].capacity)
-                    print "wasted capacity: " + str(bags[bag].capacity - total_weight) + "\n"
-            else:
-                print "No solution!"
+            outputfilename = args[1]
+            with open(outputfilename, 'w') as infile:
+                if solution is not None:
+                    keys = list(solution.keys())
+                    keys.sort()
+                    for bag in keys:
+                        total_weight = sum(items[x].weight for x in solution[bag])
+                        infile.write(bag + " " + " ".join(solution[bag]) + "\n")
+                        infile.write ("number of items: " + str(len(solution[bag])) + "\n")
+                        infile.write ("total weight " + str(total_weight) + "/" + str(bags[bag].capacity) + "\n")
+                        infile.write ("wasted capacity: " + str(bags[bag].capacity - total_weight) + "\n")
+                else:
+                    infile.write ("No solution!\n")
         else:
             # Throw error when cannot open file
             print("Input file does not exist.")
     else:
         # Show usage when not providing enough argument
-        print("Usage: python main.py <filename>")
+        print("Usage: python main.py <inputfilename> <outputfilename")
+
 
 if __name__ == "__main__":
     main()
